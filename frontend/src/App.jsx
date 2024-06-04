@@ -2,23 +2,26 @@ import axios from 'axios'
 import { useEffect,useState } from 'react'
 import { useForm } from 'react-hook-form'
 function App() {
-  const [first, setfirst] = useState()
+  const [successMsg, setsuccessMsg] = useState()
+  const [failureMsg, setfailureMsg] = useState()
+
   const {register,handleSubmit}=useForm()
-  const [isVisible, setisVisible] = useState('true') 
-  useEffect(() => {
+    useEffect(() => {
     const timer = setTimeout(()=>{
-      setisVisible(false);
+      setsuccessMsg(null);
+      setfailureMsg(null);
+
     },3000)
     return () => clearTimeout(timer);
-  }, [])
+  }, [successMsg,failureMsg])
   const onSubmit =  async (data) => {
     try {
       const res = await axios.post('/api/register',data);
-      setfirst(res.data);
+      setsuccessMsg(res.data);
       console.log(res.data)
     } catch (error) {
       console.log(error);
-      setfirst(error.message);
+      setfailureMsg(error.message);
       
     }
   };
@@ -54,10 +57,13 @@ function App() {
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Submit</button>
       </form>
     </div>
-    {first && isVisible && (<div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-md mb-4 text-center font ml-96 mr-96">
-  {first}
+    { successMsg && (<div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-md mb-4 text-center font ml-96 mr-96 animate-bounce">
+  {successMsg} 
 </div>)}
 
+{ failureMsg && (<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4 text-center font ml-96 mr-96 animate-bounce">
+  {failureMsg} 
+</div>)}
     </>
   )
 }
